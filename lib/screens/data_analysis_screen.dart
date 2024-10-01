@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import '../services/device_service.dart';
 import '../models/device.dart';
+import '../widgets/chart_widget.dart';
 
 class DataAnalysisScreen extends StatefulWidget {
   @override
   _DataAnalysisScreenState createState() => _DataAnalysisScreenState();
 }
 
-class _DataAnalysisScreenState extends State<DataAnalysisScreen> {
+class _DataAnalysisScreenState extends State<DataAnalysisScreen> with SingleTickerProviderStateMixin {
   List<Device> _devices = [];
   Device? _selectedDevice;
   DateTime _startDate = DateTime.now().subtract(Duration(days: 7));
@@ -17,11 +18,19 @@ class _DataAnalysisScreenState extends State<DataAnalysisScreen> {
   int _currentPage = 0;
   int _totalPages = 0;
   int _pageSize = 10;
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
     _loadDevices();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   void _loadDevices() async {
@@ -100,7 +109,16 @@ class _DataAnalysisScreenState extends State<DataAnalysisScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('数据分析')),
+      appBar: AppBar(
+        title: Text('数据分析'),
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: [
+            Tab(text: '表格'),
+            Tab(text: '图表'),
+          ],
+        ),
+      ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
@@ -143,15 +161,12 @@ class _DataAnalysisScreenState extends State<DataAnalysisScreen> {
             _isLoading
                 ? CircularProgressIndicator()
                 : Expanded(
-                    child: ListView.builder(
-                      itemCount: _data.length,
-                      itemBuilder: (context, index) {
-                        var item = _data[index] as Map<String, dynamic>;
-                        return ListTile(
-                          title: Text('值: ${item['value']}'),
-                          subtitle: Text('记录时间: ${item['recordTime']}'),
-                        );
-                      },
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        _buildTableView(),
+                        _buildChartView(),
+                      ],
                     ),
                   ),
             Row(
@@ -172,5 +187,24 @@ class _DataAnalysisScreenState extends State<DataAnalysisScreen> {
         ),
       ),
     );
+  }
+
+  Widget _buildTableView() {
+    return ListView.builder(
+      itemCount: _data.length,
+      itemBuilder: (context, index) {
+        var item = _data[index] as Map<String, dynamic>;
+        return ListTile(
+          title: Text('值: ${item['value']}'),
+          subtitle: Text('记录时间: ${item['recordTime']}'),
+        );
+      },
+    );
+  }
+
+  Widget _buildChartView() {
+    return _data.isEmpty
+        ? Center(child: Text('暂无数据'))
+        : ChartWidget(data: _data);
   }
 }

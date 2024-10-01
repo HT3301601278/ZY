@@ -1,6 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../models/user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   static const String baseUrl = 'http://47.116.66.208:8080/api';
@@ -33,5 +34,29 @@ class AuthService {
 
   static Future<void> logout() async {
     currentUser = null;
+  }
+
+  static Future<bool> changePassword(String oldPassword, String newPassword) async {
+    final userId = await _getUserId();
+    if (userId == null) {
+      return false;
+    }
+
+    final response = await http.put(
+      Uri.parse('$baseUrl/users/$userId/password?oldPassword=$oldPassword&newPassword=$newPassword'),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      print('Change password failed: ${response.body}');
+      return false;
+    }
+  }
+
+  static Future<int?> _getUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('userId');
   }
 }

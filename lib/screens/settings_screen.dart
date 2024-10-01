@@ -70,32 +70,93 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('设置')),
-      body: ListView(
-        children: [
-          ListTile(
-            title: Text('修改密码'),
-            onTap: _changePassword,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.blue.shade300, Colors.blue.shade700],
           ),
-          ListTile(
-            title: Text('单位设置'),
-            trailing: DropdownButton<String>(
-              value: _unit,
-              items: ['mg/L', '‰'].map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  _unit = newValue!;
-                });
-              },
-            ),
+        ),
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.arrow_back, color: Colors.white),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    Text(
+                      '设置',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Card(
+                  margin: EdgeInsets.all(16.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  color: Colors.white.withOpacity(0.9),
+                  child: ListView(
+                    children: [
+                      _buildSettingItem(
+                        icon: Icons.lock,
+                        title: '修改密码',
+                        onTap: _changePassword,
+                      ),
+                      _buildSettingItem(
+                        icon: Icons.straighten,
+                        title: '单位设置',
+                        onTap: () {}, // 添加一个空的onTap函数
+                        trailing: DropdownButton<String>(
+                          value: _unit,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              _unit = newValue!;
+                            });
+                          },
+                          items: <String>['mg/L', 'g/100mL', '‰']
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildSettingItem({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+    Widget? trailing,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.blue),
+      title: Text(title),
+      trailing: trailing,
+      onTap: onTap,
     );
   }
 }

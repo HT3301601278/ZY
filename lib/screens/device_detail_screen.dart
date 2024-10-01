@@ -39,30 +39,77 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
       setState(() {
         _isLoading = false;
       });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('加载设备数据失败：$e')),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(_device.name)),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('MAC地址: ${_device.macAddress}'),
-                  SizedBox(height: 8),
-                  Text('通信通道: ${_device.communicationChannel}'),
-                  SizedBox(height: 8),
-                  Text('阈值: ${_device.threshold}'),
-                  SizedBox(height: 8),
-                  Text('状态: ${_device.isOn ? '开启' : '关闭'}'),
-                ],
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.blue.shade300, Colors.blue.shade700],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.arrow_back, color: Colors.white),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    Text(
+                      '设备详情',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
+              Expanded(
+                child: _isLoading
+                    ? Center(child: CircularProgressIndicator(color: Colors.white))
+                    : SingleChildScrollView(
+                        padding: EdgeInsets.all(16.0),
+                        child: Card(
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          color: Colors.white.withOpacity(0.9),
+                          child: Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildInfoRow('设备名称', _device.name),
+                                _buildInfoRow('MAC地址', _device.macAddress),
+                                _buildInfoRow('通信通道', _device.communicationChannel),
+                                _buildInfoRow('阈值', _device.threshold?.toString() ?? '未设置'),
+                                _buildInfoRow('状态', _device.isOn ? '开启' : '关闭'),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+              ),
+            ],
+          ),
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
@@ -73,6 +120,36 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
           ).then((_) => _loadDeviceData());
         },
         child: Icon(Icons.edit),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.blue,
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              label,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.blue.shade700,
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Text(
+              value,
+              style: TextStyle(color: Colors.black87),
+            ),
+          ),
+        ],
       ),
     );
   }

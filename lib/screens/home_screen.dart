@@ -4,6 +4,7 @@ import 'data_analysis_screen.dart';
 import 'settings_screen.dart';
 import '../widgets/alert_widget.dart';
 import '../services/websocket_service.dart';
+import 'alert_info_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -60,6 +61,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     },
                     child: Text('数据分析'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => AlertInfoScreen()),
+                      );
+                    },
+                    child: Text('警报信息'),
                   ),
                   ElevatedButton(
                     onPressed: () {

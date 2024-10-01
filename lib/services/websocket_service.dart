@@ -2,12 +2,12 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/io.dart';
 
 class WebSocketService {
-  static WebSocketChannel? _channel;
+  static Map<String, WebSocketChannel> _channels = {};
 
   static void connect(String url, Function(dynamic) onMessage) {
     try {
-      _channel = IOWebSocketChannel.connect(url);
-      _channel!.stream.listen(
+      _channels[url] = IOWebSocketChannel.connect(url);
+      _channels[url]!.stream.listen(
         onMessage,
         onError: (error) => print('WebSocket错误: $error'),
         onDone: () => print('WebSocket连接关闭'),
@@ -17,15 +17,21 @@ class WebSocketService {
     }
   }
 
-  static void send(String message) {
-    if (_channel != null) {
-      _channel!.sink.add(message);
+  static void send(String url, String message) {
+    if (_channels.containsKey(url)) {
+      _channels[url]!.sink.add(message);
     } else {
       print('WebSocket未连接');
     }
   }
 
-  static void close() {
-    _channel?.sink.close();
+  static void close([String? url]) {
+    if (url != null) {
+      _channels[url]?.sink.close();
+      _channels.remove(url);
+    } else {
+      _channels.forEach((_, channel) => channel.sink.close());
+      _channels.clear();
+    }
   }
 }

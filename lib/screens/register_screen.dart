@@ -10,6 +10,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   String _username = '';
   String _password = '';
+  String _confirmPassword = '';
 
   void _register() async {
     if (_formKey.currentState!.validate()) {
@@ -44,8 +45,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
             TextFormField(
               decoration: InputDecoration(labelText: '密码'),
               obscureText: true,
-              validator: (value) => value!.isEmpty ? '请输入密码' : null,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return '请输入密码';
+                }
+                _password = value;
+                return null;
+              },
               onSaved: (value) => _password = value!,
+            ),
+            TextFormField(
+              decoration: InputDecoration(labelText: '确认密码'),
+              obscureText: true,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return '请再次输入密码';
+                }
+                if (value != _password) {
+                  return '两次输入的密码不一致';
+                }
+                return null;
+              },
+              onSaved: (value) => _confirmPassword = value!,
             ),
             ElevatedButton(
               onPressed: _register,

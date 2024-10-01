@@ -48,13 +48,24 @@ class DeviceService {
   }
 
   static Future<bool> addDevice(Device device) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/devices'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode(device.toJson()),
-    );
-
-    return response.statusCode == 201;
+    try {
+      print('正在发送添加设备请求：${device.toJson()}');
+      final response = await http.post(
+        Uri.parse('$baseUrl/devices'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'name': device.name,
+          'macAddress': device.macAddress,
+          'communicationChannel': device.communicationChannel,
+        }),
+      );
+      print('服务器响应状态码：${response.statusCode}');
+      print('服务器响应内容：${response.body}');
+      return response.statusCode == 200 || response.statusCode == 201;
+    } catch (e) {
+      print('添加设备时发生错误：$e');
+      return false;
+    }
   }
 
   static Future<bool> updateDevice(Device device) async {

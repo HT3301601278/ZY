@@ -30,6 +30,8 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
         isOn: false,
       );
       
+      print('准备添加的设备信息：${newDevice.toJson()}');
+      
       try {
         bool success = await DeviceService.addDevice(newDevice);
         if (success) {
@@ -39,12 +41,13 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
           Navigator.pop(context, true);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('设备添加失败，请稍后重试')),
+            SnackBar(content: Text('设备添加失败，请检查设备信息是否正确')),
           );
         }
       } catch (e) {
+        print('添加设备时发生异常：$e');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('发生错误：$e')),
+          SnackBar(content: Text('添加设备时发生错误：$e')),
         );
       } finally {
         setState(() {

@@ -12,7 +12,7 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
   String _name = '';
   String _macAddress = '';
   String _communicationChannel = '';
-  double _threshold = 0.0;
+  double? _threshold; // Changed to nullable
 
   void _addDevice() async {
     if (_formKey.currentState!.validate()) {
@@ -22,8 +22,7 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
         name: _name,
         macAddress: _macAddress,
         communicationChannel: _communicationChannel,
-        currentValue: 0.0,
-        threshold: _threshold,
+        threshold: _threshold, // Changed to nullable
         isOn: false, // 默认设置为关闭状态
       );
       
@@ -72,10 +71,17 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
               onSaved: (value) => _communicationChannel = value!,
             ),
             TextFormField(
-              decoration: InputDecoration(labelText: '阈值'),
+              decoration: InputDecoration(labelText: '阈值（可选）'),
               keyboardType: TextInputType.number,
-              validator: (value) => value!.isEmpty ? '请输入阈值' : null,
-              onSaved: (value) => _threshold = double.parse(value!),
+              validator: (value) {
+                if (value != null && value.isNotEmpty) {
+                  if (double.tryParse(value) == null) {
+                    return '请输入有效的数字';
+                  }
+                }
+                return null;
+              },
+              onSaved: (value) => _threshold = value != null && value.isNotEmpty ? double.parse(value) : null,
             ),
             SizedBox(height: 20),
             ElevatedButton(

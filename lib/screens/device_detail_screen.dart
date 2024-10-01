@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/device.dart';
 import '../services/device_service.dart';
-import '../widgets/chart_widget.dart';
 import 'device_edit_screen.dart';
 
 class DeviceDetailScreen extends StatefulWidget {
@@ -15,26 +14,24 @@ class DeviceDetailScreen extends StatefulWidget {
 
 class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
   late Device _device;
-  double? _latestValue;
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
     _device = widget.device;
-    _loadLatestData();
+    _loadDeviceData();
   }
 
-  void _loadLatestData() async {
+  void _loadDeviceData() async {
     setState(() {
       _isLoading = true;
     });
     try {
-      Device updatedDevice = await DeviceService.getDeviceData(_device.id);
-      double? latestValue = await DeviceService.getLatestDeviceValue(_device.id);
+      Map<String, dynamic> result = await DeviceService.getDeviceData(_device.id);
+      Device updatedDevice = result['device'];
       setState(() {
         _device = updatedDevice;
-        _latestValue = latestValue;
         _isLoading = false;
       });
     } catch (e) {
@@ -60,10 +57,9 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                   SizedBox(height: 8),
                   Text('通信通道: ${_device.communicationChannel}'),
                   SizedBox(height: 8),
-                  Text('当前值: ${_latestValue?.toStringAsFixed(2) ?? "暂无数据"}'),
-                  SizedBox(height: 8),
                   Text('阈值: ${_device.threshold}'),
-                  SizedBox(height: 16),
+                  SizedBox(height: 8),
+                  Text('状态: ${_device.isOn ? '开启' : '关闭'}'),
                 ],
               ),
             ),
@@ -74,7 +70,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
             MaterialPageRoute(
               builder: (context) => DeviceEditScreen(device: _device),
             ),
-          ).then((_) => _loadLatestData());
+          ).then((_) => _loadDeviceData());
         },
         child: Icon(Icons.edit),
       ),

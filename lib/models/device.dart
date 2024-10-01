@@ -3,7 +3,6 @@ class Device {
   final String name;
   final String macAddress;
   final String communicationChannel;
-  final double? currentValue;
   final double? threshold;
   final bool isOn;
 
@@ -12,7 +11,6 @@ class Device {
     required this.name,
     required this.macAddress,
     required this.communicationChannel,
-    this.currentValue,
     this.threshold,
     required this.isOn,
   });
@@ -23,7 +21,6 @@ class Device {
       name: json['name'],
       macAddress: json['macAddress'],
       communicationChannel: json['communicationChannel'],
-      currentValue: json['currentValue']?.toDouble(),
       threshold: json['threshold']?.toDouble(),
       isOn: json['isOn'],
     );
@@ -39,9 +36,19 @@ class Device {
       name: name ?? this.name,
       macAddress: this.macAddress,
       communicationChannel: this.communicationChannel,
-      currentValue: this.currentValue,
       threshold: threshold ?? this.threshold,
       isOn: isOn ?? this.isOn,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'macAddress': macAddress,
+      'communicationChannel': communicationChannel,
+      'threshold': threshold,
+      'isOn': isOn,
+    };
   }
 }

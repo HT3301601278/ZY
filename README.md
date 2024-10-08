@@ -103,7 +103,7 @@ lib/
 2. `device_service.dart`: 处理与设备相关的API请求。
 3. `websocket_service.dart`: 管理WebSocket连接,用于接收实时警报。
 
-## 酒精浓度监测系统 API 文档
+## API 文档
 
 ### 基础URL
 

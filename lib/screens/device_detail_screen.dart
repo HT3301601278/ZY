@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../models/device.dart';
 import '../services/device_service.dart';
 import 'device_edit_screen.dart';

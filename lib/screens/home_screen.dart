@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'device_list_screen.dart';
-import 'data_analysis_screen.dart';
-import 'settings_screen.dart';
-import '../widgets/alert_widget.dart';
+
 import '../services/websocket_service.dart';
+import '../widgets/alert_widget.dart';
 import 'alert_info_screen.dart';
+import 'data_analysis_screen.dart';
+import 'device_list_screen.dart';
+import 'settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override

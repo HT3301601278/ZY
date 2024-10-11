@@ -1,7 +1,9 @@
-import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../models/user.dart';
+
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../models/user.dart';
 
 class AuthService {
   static const String baseUrl = 'http://47.116.66.208:8080/api';

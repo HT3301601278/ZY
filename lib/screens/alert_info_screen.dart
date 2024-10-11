@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../services/websocket_service.dart';
 
 class AlertInfoScreen extends StatefulWidget {

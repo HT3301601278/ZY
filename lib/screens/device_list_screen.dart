@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import '../services/device_service.dart';
+
 import '../models/device.dart';
+import '../services/device_service.dart';
 import '../widgets/device_list_item.dart';
-import 'device_detail_screen.dart';
 import 'add_device_screen.dart';
+import 'device_detail_screen.dart';
 
 class DeviceListScreen extends StatefulWidget {
   @override
